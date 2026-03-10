@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Working jQuery MCQ Quiz</title>
+    <!-- Load jQuery first using a complete HTTPS URL -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com">
+    
+    <style>
+        body { font-family: sans-serif; max-width: 650px; margin: 20px auto; padding: 20px; background: #f0f2f5; }
+        .quiz-container, #result-area { background: white; padding: 25px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .question { margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 10px; }
+        .options label { display: block; margin: 5px 0; cursor: pointer; padding: 8px; background: #fafafa; border-radius: 4px; }
+        .options label:hover { background: #e9ecef; }
+        #submit-quiz { background: #007bff; color: white; border: none; padding: 12px; width: 100%; border-radius: 5px; cursor: pointer; font-size: 16px; }
+        #result-area { display: none; text-align: center; }
+        .stars { font-size: 40px; color: #ddd; margin: 15px 0; }
+        .stars .active { color: #ffc107; }
+        .analysis { font-weight: bold; color: #333; font-size: 18px; }
+    </style>
+</head>
+<body>
+
+<div class="quiz-container">
+    <h2 style="text-align:center;">jQuery Knowledge Test</h2>
+    <div id="quiz-content">Loading questions...</div>
+    <button id="submit-quiz">Submit Answers</button>
+</div>
+
+<div id="result-area">
+    <h3>Quiz Complete!</h3>
+    <p id="score-text" style="font-size: 22px; color: #007bff;"></p>
+    <div class="stars" id="star-rating">
+        <i class="fa fa-star" data-val="1"></i>
+        <i class="fa fa-star" data-val="2"></i>
+        <i class="fa fa-star" data-val="3"></i>
+        <i class="fa fa-star" data-val="4"></i>
+        <i class="fa fa-star" data-val="5"></i>
+    </div>
+    <div id="feedback" class="analysis"></div>
+    <br>
+    <button onclick="location.reload()" style="cursor:pointer; padding: 8px 15px;">Restart Quiz</button>
+</div>
+
+<script>
+// Wrap everything in a ready function to ensure the DOM is loaded
+$(document).ready(function() {
+    const questions = [
+        { q: "1. jQuery is a ______ library.", a: ["CSS", "JavaScript", "PHP", "HTML"], c: 1 },
+        { q: "2. Which symbol is used for jQuery?", a: ["&", "#", "$", "@"], c: 2 },
+        { q: "3. How to select an ID 'btn'?", a: ["$('.btn')", "$('#btn')", "$('btn')", "$('ID btn')"], c: 1 },
+        { q: "4. Method to change HTML content?", a: ["html()", "text()", "val()", "set()"], c: 0 },
+        { q: "5. Method to handle click events?", a: ["onHold()", "click()", "press()", "touch()"], c: 1 },
+        { q: "6. Method to fetch input value?", a: ["getValue()", "text()", "val()", "input()"], c: 2 },
+        { q: "7. Method to add a CSS class?", a: ["appendClass()", "addClass()", "insertClass()", "putClass()"], c: 1 },
+        { q: "8. Select all <div> elements?", a: ["$('.div')", "$('#div')", "$('div')", "$('*div')"], c: 2 },
+        { q: "9. How to hide an element?", a: ["visible(0)", "hide()", "remove()", "exit()"], c: 1 },
+        { q: "10. jQuery is used for ______ manipulation.", a: ["DOM", "Server", "Database", "Hardware"], c: 0 }
+    ];
+
+    // Render questions
+    let content = "";
+    questions.forEach((item, i) => {
+        content += `<div class="question"><p><strong>${item.q}</strong></p><div class="options">`;
+        item.a.forEach((opt, idx) => {
+            content += `<label><input type="radio" name="q${i}" value="${idx}"> ${opt}</label>`;
+        });
+        content += `</div></div>`;
+    });
+    $("#quiz-content").html(content);
+
+    // Evaluation
+    $("#submit-quiz").on("click", function() {
+        let score = 0;
+        let complete hn= true;
+
+        questions.forEach((item, i) => {
+            let selected = $(`input[name="q${i}"]:checked`).val();
+            if (selected === undefined) { complete = false; }
+            if (parseInt(selected) === item.c) { score++; }
+        });
+
+        if (!complete) {
+            alert("Please answer all questions!");
+            return;
+        }
+
+        // Show Results
+        $(".quiz-container").hide();
+        $("#result-area").fadeIn();
+        $("#score-text").text(`You got ${score} out of 10!`);
+
+        // Update Stars (Score of 10 / 2 = 5 stars)
+        let starCount = Math.ceil(score / 2) || 1;
+        $("#star-rating i").each(function() {
+            if ($(this).data("val") <= starCount) $(this).addClass("active");
+        });
+
+        // Set Feedback
+        let msg = score > 8 ? "Excellent Performance!" : score > 5 ? "Good Effort!" : "Need more Practice!";
+        $("#feedback").text(msg);
+    });
+});
+</script>
+
+</body>
+</html>
+
